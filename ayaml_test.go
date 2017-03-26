@@ -58,3 +58,14 @@ func TestDump(t *testing.T) {
 	assert.Equal(t, "Taro", d["name"])
 	assert.Equal(t, "2014-01-01 00:00:00", d["created"])
 }
+
+func TestWithDump(t *testing.T) {
+	a, _ := New(validYaml)
+
+	_, err := a.WithDump(SchemaData{})
+	require.Error(t, err)
+
+	d, err := a.Schema("valid_user").WithDump(SchemaData{"id": 1})
+	require.NoError(t, err)
+	assert.Equal(t, 1, d["id"])
+}

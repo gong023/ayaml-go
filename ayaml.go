@@ -6,11 +6,6 @@ import (
 	"io/ioutil"
 )
 
-type Marshaler interface {
-	Marshal(v interface{}) ([]byte, error)
-	Unmarshal(data []byte, v interface{}) error
-}
-
 type SchemaData map[string]interface{}
 type fileData map[string]SchemaData
 
@@ -61,7 +56,4 @@ func (a *Ayaml) Dump() (SchemaData, error) {
 
 func (a *Ayaml) WithDump(newData SchemaData) (SchemaData, error) {
 	return a.With(newData).Dump()
-}
-
-func (*Ayaml) SetMarshaler(marshaler Marshaler) {
 }
