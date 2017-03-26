@@ -14,7 +14,7 @@ type Ayaml struct {
 	schema   string
 }
 
-func New(filename string) (ayaml Ayaml, err error) {
+func New(filename string) (ayaml *Ayaml, err error) {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return
@@ -25,8 +25,12 @@ func New(filename string) (ayaml Ayaml, err error) {
 	if err != nil {
 		return
 	}
-	ayaml.fileData = f
+	ayaml = &Ayaml{fileData: f}
 	return
+}
+
+func Seq(a *Ayaml) *AyamlSeq {
+	return &AyamlSeq{Base: a}
 }
 
 func (a *Ayaml) Schema(key string) *Ayaml {

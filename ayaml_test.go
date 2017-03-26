@@ -69,3 +69,9 @@ func TestWithDump(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 1, d["id"])
 }
+
+func TestSeq(t *testing.T) {
+	a, _ := New(validYaml)
+	seq := Seq(a)
+	assert.Equal(t, 100000000, seq.Base.fileData["valid_user"]["id"])
+}
