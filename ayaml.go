@@ -61,3 +61,21 @@ func (a *Ayaml) Dump() (SchemaData, error) {
 func (a *Ayaml) WithDump(newData SchemaData) (SchemaData, error) {
 	return a.With(newData).Dump()
 }
+
+func (a *Ayaml) withCopy(newData SchemaData) Ayaml {
+	aa := *a
+	fileData := make(fileData)
+	for fileKey, fileValue := range fileData {
+		fileData[fileKey] = fileValue
+	}
+	schemaData := make(SchemaData)
+	for schemaKey, schemaValue := range a.fileData[a.schema] {
+		schemaData[schemaKey] = schemaValue
+	}
+	fileData[a.schema] = schemaData
+	aa.fileData = fileData
+
+	(&aa).With(newData)
+
+	return aa
+}

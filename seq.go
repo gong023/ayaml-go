@@ -17,10 +17,10 @@ func (as *AyamlSeq) Range(key string, start int, end int) RangeCalculator {
 	}
 
 	decrement := rangeDecrement{
-		AyamlSeq: as,
-		Key:      key,
-		Min:      start,
-		Max:      end,
+		ayamlSeq: as,
+		key:      key,
+		min:      end,
+		max:      start,
 	}
 	return RangeCalculator(&decrement)
 }

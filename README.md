@@ -131,7 +131,7 @@ data == []SchemaData{
 }
 
 // make numeric and date column sequential.
-data, _ = ayaml.Seq(user).Range("id", 10, 12).Between("created", "2014-01-01 00:00:00", "2014-03-01 00:00:00").ByMonth().Dump()
+data, _ = ayaml.Seq(user).Range("id", 10, 12).ByOne().Between("created", "2014-01-01 00:00:00", "2014-03-01 00:00:00").ByMonth().Dump()
 data == []SchemaData{
 	{
 		"id": 10,
