@@ -9,9 +9,8 @@ import (
 func TestSeqDump(t *testing.T) {
 	a, _ := New(validYaml)
 	a.Schema("valid_user")
-	seq := Seq(a)
 
-	data, err := seq.Range("id", 100, 103).ByOne().Dump()
+	data, err := Seq(a).Range("id", 100, 103).ByOne().Dump()
 	require.NoError(t, err)
 	assert.Len(t, data, 4)
 	for i, d := range data {
@@ -20,8 +19,7 @@ func TestSeqDump(t *testing.T) {
 		assert.Equal(t, "2014-01-01 00:00:00", d["created"])
 	}
 
-	seq = Seq(a)
-	data, err = seq.Range("id", 103, 100).ByOne().Dump()
+	data, err = Seq(a).Range("id", 103, 100).ByOne().Dump()
 	require.NoError(t, err)
 	assert.Len(t, data, 4)
 	for i, d := range data {
