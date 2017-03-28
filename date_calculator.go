@@ -11,38 +11,36 @@ const (
 )
 
 type DateCalculator interface {
-	By(layout string, duration time.Duration) *AyamlSeq
-	BySecond(layout string) *AyamlSeq
-	ByMinute(layout string) *AyamlSeq
-	ByHour(layout string) *AyamlSeq
-	ByDay(layout string) *AyamlSeq
-	ByYear(layout string) *AyamlSeq
+	By(modify func(time time.Time) time.Time) *AyamlSeq
+	BySecond() *AyamlSeq
+	ByMinute() *AyamlSeq
+	ByHour() *AyamlSeq
+	ByDay() *AyamlSeq
+	ByYear() *AyamlSeq
 }
 
 type dateIncrement struct {
 	ayamlSeq *AyamlSeq
 	key      string
-	min      string
-	max      string
+	layout   string
+	min      time.Time
+	max      time.Time
 }
 
 type dateDecrement struct {
 	ayamlSeq *AyamlSeq
 	key      string
-	min      string
-	max      string
+	layout   string
+	min      time.Time
+	max      time.Time
 }
 
-func (d *dateIncrement) By(layout string, modify func(minTime time.Time) time.Time) *AyamlSeq {
-	// note: err is ignored here
-	minTime, _ := time.Parse(layout, d.min)
-	maxTime, _ := time.Parse(layout, d.max)
-
+func (d *dateIncrement) By(modify func(minTime time.Time) time.Time) *AyamlSeq {
 	for {
-		data := d.ayamlSeq.Base.withCopy(SchemaData{d.key: minTime.Format(layout)})
+		data := d.ayamlSeq.Base.withCopy(SchemaData{d.key: d.min.Format(d.layout)})
 		d.ayamlSeq.Results = append(d.ayamlSeq.Results, &data)
-		minTime = modify(minTime)
-		if minTime.After(maxTime) {
+		d.min = modify(d.min)
+		if d.min.After(d.max) {
 			break
 		}
 	}
@@ -50,16 +48,12 @@ func (d *dateIncrement) By(layout string, modify func(minTime time.Time) time.Ti
 	return d.ayamlSeq
 }
 
-func (d *dateDecrement) By(layout string, modify func(maxTime time.Time) time.Time) *AyamlSeq {
-	// note: err is ignored here
-	minTime, _ := time.Parse(layout, d.min)
-	maxTime, _ := time.Parse(layout, d.max)
-
+func (d *dateDecrement) By(modify func(maxTime time.Time) time.Time) *AyamlSeq {
 	for {
-		data := d.ayamlSeq.Base.withCopy(SchemaData{d.key: maxTime.Format(layout)})
+		data := d.ayamlSeq.Base.withCopy(SchemaData{d.key: d.max.Format(d.layout)})
 		d.ayamlSeq.Results = append(d.ayamlSeq.Results, &data)
-		maxTime = modify(maxTime)
-		if maxTime.Before(minTime) {
+		d.max = modify(d.max)
+		if d.max.Before(d.min) {
 			break
 		}
 	}
@@ -67,56 +61,56 @@ func (d *dateDecrement) By(layout string, modify func(maxTime time.Time) time.Ti
 	return d.ayamlSeq
 }
 
-func (d *dateIncrement) BySecond(layout string) *AyamlSeq {
-	return d.By(layout, func(minTime time.Time) time.Time {
+func (d *dateIncrement) BySecond() *AyamlSeq {
+	return d.By(func(minTime time.Time) time.Time {
 		return minTime.Add(time.Second)
 	})
 }
 
-func (d *dateDecrement) BySecond(layout string) *AyamlSeq {
-	return d.By(layout, func(maxTime time.Time) time.Time {
+func (d *dateDecrement) BySecond() *AyamlSeq {
+	return d.By(func(maxTime time.Time) time.Time {
 		return maxTime.Add(-time.Second)
 	})
 }
 
-func (d *dateIncrement) ByMinute(layout string) *AyamlSeq {
-	return d.By(layout, func(minTime time.Time) time.Time {
+func (d *dateIncrement) ByMinute() *AyamlSeq {
+	return d.By(func(minTime time.Time) time.Time {
 		return minTime.Add(time.Minute)
 	})
 }
 
-func (d *dateDecrement) ByMinute(layout string) *AyamlSeq {
-	return d.By(layout, func(maxTime time.Time) time.Time {
+func (d *dateDecrement) ByMinute() *AyamlSeq {
+	return d.By(func(maxTime time.Time) time.Time {
 		return maxTime.Add(-time.Minute)
 	})
 }
 
-func (d *dateIncrement) ByHour(layout string) *AyamlSeq {
-	return d.By(layout, func(minTime time.Time) time.Time {
+func (d *dateIncrement) ByHour() *AyamlSeq {
+	return d.By(func(minTime time.Time) time.Time {
 		return minTime.Add(time.Hour)
 	})
 }
 
-func (d *dateDecrement) ByHour(layout string) *AyamlSeq {
-	return d.By(layout, func(maxTime time.Time) time.Time {
+func (d *dateDecrement) ByHour() *AyamlSeq {
+	return d.By(func(maxTime time.Time) time.Time {
 		return maxTime.Add(-time.Hour)
 	})
 }
 
-func (d *dateIncrement) ByDay(layout string) *AyamlSeq {
-	return d.By(layout, func(minTime time.Time) time.Time {
+func (d *dateIncrement) ByDay() *AyamlSeq {
+	return d.By(func(minTime time.Time) time.Time {
 		return minTime.Add(Day)
 	})
 }
 
-func (d *dateDecrement) ByDay(layout string) *AyamlSeq {
-	return d.By(layout, func(maxTime time.Time) time.Time {
+func (d *dateDecrement) ByDay() *AyamlSeq {
+	return d.By(func(maxTime time.Time) time.Time {
 		return maxTime.Add(-Day)
 	})
 }
 
-func (d *dateIncrement) ByYear(layout string) *AyamlSeq {
-	return d.By(layout, func(minTime time.Time) time.Time {
+func (d *dateIncrement) ByYear() *AyamlSeq {
+	return d.By(func(minTime time.Time) time.Time {
 		year := minTime.Year()
 		if year%4 == 0 && (year%100 != 0 || year%400 == 0) {
 			return minTime.Add(Year + Day)
@@ -125,8 +119,8 @@ func (d *dateIncrement) ByYear(layout string) *AyamlSeq {
 	})
 }
 
-func (d *dateDecrement) ByYear(layout string) *AyamlSeq {
-	return d.By(layout, func(maxTime time.Time) time.Time {
+func (d *dateDecrement) ByYear() *AyamlSeq {
+	return d.By(func(maxTime time.Time) time.Time {
 		maxTime = maxTime.Add(-Year)
 		year := maxTime.Year()
 		if year%4 == 0 && (year%100 != 0 || year%400 == 0) {

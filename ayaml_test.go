@@ -20,7 +20,7 @@ func TestAyamlNew(t *testing.T) {
 	fd := a.fileData
 	assert.Equal(t, 100000000, fd["valid_user"]["id"])
 	assert.Equal(t, "Taro", fd["valid_user"]["name"])
-	assert.Equal(t, "2014-01-01 00:00:00", fd["valid_user"]["created"])
+	assert.Equal(t, "2014-01-01T00:00:00Z", fd["valid_user"]["created"])
 }
 
 func TestSchema(t *testing.T) {
@@ -35,12 +35,12 @@ func TestWith(t *testing.T) {
 	a.Schema("valid_user").With(SchemaData{
 		"id":      1,
 		"name":    "Jiro",
-		"created": "2015-01-01 00:00:00",
+		"created": "2015-01-01T00:00:00Z",
 	})
 	fd := a.fileData
 	assert.Equal(t, 1, fd["valid_user"]["id"])
 	assert.Equal(t, "Jiro", fd["valid_user"]["name"])
-	assert.Equal(t, "2015-01-01 00:00:00", fd["valid_user"]["created"])
+	assert.Equal(t, "2015-01-01T00:00:00Z", fd["valid_user"]["created"])
 }
 
 func TestDump(t *testing.T) {
@@ -56,7 +56,7 @@ func TestDump(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 100000000, d["id"])
 	assert.Equal(t, "Taro", d["name"])
-	assert.Equal(t, "2014-01-01 00:00:00", d["created"])
+	assert.Equal(t, "2014-01-01T00:00:00Z", d["created"])
 }
 
 func TestWithDump(t *testing.T) {

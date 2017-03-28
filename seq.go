@@ -1,5 +1,9 @@
 package ayaml
 
+import (
+	"time"
+)
+
 type AyamlSeq struct {
 	Base    *Ayaml
 	Results []*Ayaml
@@ -23,6 +27,32 @@ func (as *AyamlSeq) Range(key string, start int, end int) RangeCalculator {
 		max:      start,
 	}
 	return RangeCalculator(&decrement)
+}
+
+func (as *AyamlSeq) Between(key string, layout string, start string, end string) DateCalculator {
+	// note: err is ignored here
+	startTime, _ := time.Parse(layout, start)
+	endTime, _ := time.Parse(layout, end)
+
+	if startTime.Before(endTime) {
+		increment := dateIncrement{
+			ayamlSeq: as,
+			key:      key,
+			layout:   layout,
+			min:      startTime,
+			max:      endTime,
+		}
+		return DateCalculator(&increment)
+	}
+
+	decrement := dateDecrement{
+		ayamlSeq: as,
+		key:      key,
+		layout:   layout,
+		min:      endTime,
+		max:      startTime,
+	}
+	return DateCalculator(&decrement)
 }
 
 func (as *AyamlSeq) Dump() ([]SchemaData, error) {
