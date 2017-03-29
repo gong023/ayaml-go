@@ -17,7 +17,7 @@ build data from below yml
 valid_user:
   id: 100000000
   name: UserName
-  created: '2014-01-01 00:00:00'
+  created: '2014-01-01T00:00:00Z'
 ```
 
 ```go
@@ -28,14 +28,14 @@ data, _ := a.Schema("valid_user").Dump()
 data == SchemaData{
 	"id":      100000000,
 	"name":    "UserName",
-	"created": "2014-01-01 00:00:00",
+	"created": "2014-01-01T00:00:00Z",
 }
 
 data, _ = a.Schema("valid_user").With(SchemaData{"id": 1}).Dump()
 data == SchemaData{
 	"id":      1,
 	"name":    "UserName",
-	"created": "2014-01-01 00:00:00",
+	"created": "2014-01-01T00:00:00Z",
 }
 ```
 
@@ -55,17 +55,17 @@ data == []SchemaData{
 	{
 		"id": 10,
 		"name": "UserName",
-		"created": "2014-01-01 00:00:00",
+		"created": "2014-01-01T00:00:00Z",
 	},
 	{
 		"id": 11,
 		"name": "UserName",
-		"created": "2014-01-01 00:00:00",
+		"created": "2014-01-01T00:00:00Z",
 	},
 	{
 		"id": 12,
 		"name": "UserName",
-		"created": "2014-01-01 00:00:00",
+		"created": "2014-01-01T00:00:00Z",
 	},
 }
 
@@ -75,78 +75,80 @@ data == []SchemaData{
 	{
 		"id": 10,
 		"name": "UserName",
-		"created": "2014-01-01 00:00:00",
+		"created": "2014-01-01T00:00:00Z",
 	},
 	{
 		"id": 9,
 		"name": "UserName",
-		"created": "2014-01-01 00:00:00",
+		"created": "2014-01-01T00:00:00Z",
 	},
 	{
 		"id": 8,
 		"name": "UserName",
-		"created": "2014-01-01 00:00:00",
+		"created": "2014-01-01T00:00:00Z",
 	},
 }
 
 // increment date string.
 // you can specify duration 'byDay','byWeek','byMonth','byYear','bySecond'
-data, _ = ayaml.Seq(user).Between("created", "2014-01-01 00:00:00", "2014-03-01 00:00:00").ByMonth().Dump()
+data, _ = ayaml.Seq(user).Between("created", time.RFC3339, "2014-01-01T00:00:00Z", "2014-03-01T00:00:00Z").ByMonth().Dump()
 data == []SchemaData{
 	{
 		"id": 100000000,
 		"name": "UserName",
-		"created": "2014-01-01 00:00:00",
+		"created": "2014-01-01T00:00:00Z",
 	},
 	{
 		"id": 100000000,
 		"name": "UserName",
-		"created": "2014-02-01 00:00:00",
+		"created": "2014-02-01T00:00:00Z",
 	},
 	{
 		"id": 100000000,
 		"name": "UserName",
-		"created": "2014-03-01 00:00:00",
+		"created": "2014-03-01T00:00:00Z",
 	},
 }
 
 // decrement date string.
-data, _ = ayaml.Seq(user).Between("created", "2014-03-01 00:00:00", "2014-01-01 00:00:00").ByMonth().Dump()
+data, _ = ayaml.Seq(user).Between("created", time.RFC3339, "2014-03-01T00:00:00Z", "2014-01-01T00:00:00Z").ByMonth().Dump()
 data == []SchemaData{
 	{
 		"id": 100000000,
 		"name": "UserName",
-		"created": "2014-03-01 00:00:00",
+		"created": "2014-03-01T00:00:00Z",
 	},
 	{
 		"id": 100000000,
 		"name": "UserName",
-		"created": "2014-02-01 00:00:00",
+		"created": "2014-02-01T00:00:00Z",
 	},
 	{
 		"id": 100000000,
 		"name": "UserName",
-		"created": "2014-01-01 00:00:00",
+		"created": "2014-01-01T00:00:00Z",
 	},
 }
 
 // make numeric and date column sequential.
-data, _ = ayaml.Seq(user).Range("id", 10, 12).ByOne().Between("created", "2014-01-01 00:00:00", "2014-03-01 00:00:00").ByMonth().Dump()
+d := ayaml.Seq(user).Range("id", 10, 12).ByOne()
+d = d.Between("created", time.RFC3339, "2014-01-01T00:00:00Z", "2014-03-01T00:00:00Z").ByMonth()
+data := d.Dump()
 data == []SchemaData{
 	{
 		"id": 10,
 		"name": "UserName",
-		"created": "2014-01-01 00:00:00",
+		"created": "2014-01-01T00:00:00Z",
 	},
 	{
 		"id": 11,
 		"name": "UserName",
-		"created": "2014-02-01 00:00:00",
+		"created": "2014-02-01T00:00:00Z",
 	},
 	{
 		"id": 13,
 		"name": "UserName",
-		"created": "2014-03-01 00:00:00",
+		"created": "2014-03-01T00:00:00Z",
 	},
 }
 ```
