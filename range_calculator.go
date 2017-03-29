@@ -20,17 +20,33 @@ type rangeDecrement struct {
 }
 
 func (r *rangeIncrement) ByOne() *AyamlSeq {
-	for i := r.min; i <= r.max; i++ {
-		data := r.ayamlSeq.Base.withCopy(SchemaData{r.key: i})
-		r.ayamlSeq.Results = append(r.ayamlSeq.Results, &data)
+	length := len(r.ayamlSeq.Results)
+	index := 0
+	for v := r.min; v <= r.max; v++ {
+		if length > index {
+			data := r.ayamlSeq.Results[index].withCopy(SchemaData{r.key: v})
+			r.ayamlSeq.Results[index] = &data
+		} else {
+			data := r.ayamlSeq.Base.withCopy(SchemaData{r.key: v})
+			r.ayamlSeq.Results = append(r.ayamlSeq.Results, &data)
+		}
+		index++
 	}
 	return r.ayamlSeq
 }
 
 func (r *rangeDecrement) ByOne() *AyamlSeq {
-	for i := r.max; i >= r.min; i-- {
-		data := r.ayamlSeq.Base.withCopy(SchemaData{r.key: i})
-		r.ayamlSeq.Results = append(r.ayamlSeq.Results, &data)
+	length := len(r.ayamlSeq.Results)
+	index := 0
+	for v := r.max; v >= r.min; v-- {
+		if length > index {
+			data := r.ayamlSeq.Results[index].withCopy(SchemaData{r.key: v})
+			r.ayamlSeq.Results[index] = &data
+		} else {
+			data := r.ayamlSeq.Base.withCopy(SchemaData{r.key: v})
+			r.ayamlSeq.Results = append(r.ayamlSeq.Results, &data)
+		}
+		index++
 	}
 	return r.ayamlSeq
 }

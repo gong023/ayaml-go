@@ -36,9 +36,17 @@ type dateDecrement struct {
 }
 
 func (d *dateIncrement) By(modify func(minTime time.Time) time.Time) *AyamlSeq {
+	length := len(d.ayamlSeq.Results)
+	i := 0
 	for {
-		data := d.ayamlSeq.Base.withCopy(SchemaData{d.key: d.min.Format(d.layout)})
-		d.ayamlSeq.Results = append(d.ayamlSeq.Results, &data)
+		if length > i {
+			data := d.ayamlSeq.Results[i].withCopy(SchemaData{d.key: d.min.Format(d.layout)})
+			d.ayamlSeq.Results[i] = &data
+		} else {
+			data := d.ayamlSeq.Base.withCopy(SchemaData{d.key: d.min.Format(d.layout)})
+			d.ayamlSeq.Results = append(d.ayamlSeq.Results, &data)
+		}
+		i++
 		d.min = modify(d.min)
 		if d.min.After(d.max) {
 			break
@@ -49,9 +57,17 @@ func (d *dateIncrement) By(modify func(minTime time.Time) time.Time) *AyamlSeq {
 }
 
 func (d *dateDecrement) By(modify func(maxTime time.Time) time.Time) *AyamlSeq {
+	length := len(d.ayamlSeq.Results)
+	i := 0
 	for {
-		data := d.ayamlSeq.Base.withCopy(SchemaData{d.key: d.max.Format(d.layout)})
-		d.ayamlSeq.Results = append(d.ayamlSeq.Results, &data)
+		if length > i {
+			data := d.ayamlSeq.Results[i].withCopy(SchemaData{d.key: d.max.Format(d.layout)})
+			d.ayamlSeq.Results[i] = &data
+		} else {
+			data := d.ayamlSeq.Base.withCopy(SchemaData{d.key: d.max.Format(d.layout)})
+			d.ayamlSeq.Results = append(d.ayamlSeq.Results, &data)
+		}
+		i++
 		d.max = modify(d.max)
 		if d.max.Before(d.min) {
 			break
